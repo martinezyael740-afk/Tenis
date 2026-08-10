@@ -1,45 +1,48 @@
-
 name: Build Android APK
 
 on:
   workflow_dispatch:
   push:
     branches:
-      - main
+      - principal
 
 jobs:
   build:
+    name: Construir APK
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Descargar código
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-  uses: actions/setup-node@v4
-  with:
-    node-version: 20
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-      - name: Install dependencies
+      - name: Instalar dependencias
         run: npm install
 
-      - name: Create Android project
+      - name: Crear proyecto Android
         run: npx cap add android
 
-      - name: Sync Capacitor
+      - name: Sincronizar Capacitor
         run: npx cap sync android
 
-      - name: Setup Java
+      - name: Configurar Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
 
-      - name: Build APK
+      - name: Dar permisos a Gradle
+        run: chmod +x android/gradlew
+
+      - name: Construir APK
         working-directory: android
         run: ./gradlew assembleDebug
 
-      - name: Upload APK
+      - name: Guardar APK
         uses: actions/upload-artifact@v4
         with:
           name: Matchpoint-Analytics-APK
