@@ -8,41 +8,39 @@ on:
 
 jobs:
   build:
-    name: Construir APK
     runs-on: ubuntu-latest
 
     steps:
-      - name: Descargar código
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Configurar Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Instalar dependencias
+      - name: Install dependencies
         run: npm install
 
-      - name: Crear proyecto Android
+      - name: Create Android project
         run: npx cap add android
 
-      - name: Sincronizar Capacitor
-        run: npx cap sync android
+      - name: Sync Capacitor
+        run: npx cap sync
 
-      - name: Configurar Java
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
 
-      - name: Dar permisos a Gradle
+      - name: Give Gradle permission
         run: chmod +x android/gradlew
 
-      - name: Construir APK
-        working-directory: android
-        run: ./gradlew assembleDebug
+      - name: Build APK
+        run: cd android && ./gradlew assembleDebug
 
-      - name: Guardar APK
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: Matchpoint-Analytics-APK
